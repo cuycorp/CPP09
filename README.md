@@ -16,7 +16,20 @@
                 search for date in database
 
     * ex01: Reverse Polish Notation
-        * learn Re
+        1. learn Reverse polish Notation
+        2. Parsing 
+            Rules
+            * numbers less than 10
+            * operations:" + - / *
+        3. Include exceptions
+
+        <stack>
 
     * ex02
-        <stack>
+        * merge insert algorithm: Ford-Johnson algorithm
+        <vector >
+        <deque>
+
+////
+Ongoing task: noting subject
+next task: 
