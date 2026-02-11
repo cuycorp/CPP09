@@ -31,5 +31,21 @@
         <deque>
 
 ////
-Ongoing task: noting subject
-next task: 
+Ongoing task: opening files
+next task: storing files in map
+
+
+/*
+//attributes
+set queries
+set database
+std::string fileName
+
+//methods
+
+void openQuery()
+void openDataBase()
+void searchDate()
+///////////***main** 
+displayConversion()
+*/
