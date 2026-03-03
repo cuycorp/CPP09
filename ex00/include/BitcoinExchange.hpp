@@ -17,11 +17,14 @@ class BitcoinExchange
         //BitcoinExchange(const BitcoinExchange& other);
         //BitcoinExchange &operator=(const BitcoinExchange &other);
         ~BitcoinExchange();
-        //main method
+        //main methods
         //void parseQueries();
         void openQueries(void);
-        //void openDataBase();
-        //void searchDate();
+        void openDataBase(void);
+        void searchDate(std::string date);
+    private:
+        bool validateDate(const std::string &date);
+        double getRate(const std::string &date);
 };
 
 #endif
