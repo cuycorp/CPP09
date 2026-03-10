@@ -155,7 +155,3 @@ double BitcoinExchange::getRate(const std::string &date)
     return it->second;
 }
 
-// void BitcoinExchange::searchDate(std::string date)
-// {
-//     (void)date;
-// }
