@@ -1,12 +1,10 @@
 #include "BitcoinExchange.hpp"
 /* file(), is_open()*/
-#include <fstream>// for parsing lines
+// for parsing lines
 #include <cstdlib> // for std::atof
 
-// Default constructor
-BitcoinExchange::BitcoinExchange(std::string fileName): _fileName(fileName)
-{
-}
+/****************** Default constructor ******************/
+BitcoinExchange::BitcoinExchange(std::string fileName): _fileName(fileName) {}
 
 // Copy constructor
 //BitcoinExchange::BitcoinExchange(const BitcoinExchange &other)
@@ -16,7 +14,7 @@ BitcoinExchange::BitcoinExchange(std::string fileName): _fileName(fileName)
 //    return ;
 //}
 //
-//// Assignment operator overload
+
 //BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &other)
 //{
 //    std::cout << "Assignment operator called" << std::endl;
@@ -24,14 +22,102 @@ BitcoinExchange::BitcoinExchange(std::string fileName): _fileName(fileName)
 //    return (*this);
 //}
 
-// Destructor
 BitcoinExchange::~BitcoinExchange(void) {}
 
-/***********************Other methods ***************************/
+
+
+/****************** Public ******************/
+/**
+    @brief reads query lines, validates them and search for result if date is valid 
+*/
+void BitcoinExchange::repondQueries(void)
+{
+    std::ifstream file(_fileName.c_str());
+    std::string line;
+
+    openAndValidateFile(file);
+
+    while (std::getline(file, line)) 
+    {
+        if (line.empty() || line == "date | value")
+            continue;
+        size_t sep = line.find('|');
+        if (sep == std::string::npos) {
+            std::cerr << "Error: bad input => " << line << std::endl;
+            continue;
+        }
+
+        std::string date = line.substr(0, sep);
+        std::string value_str = line.substr(sep + 1);
+
+        if (!validateDate(date)) 
+        {
+            std::cerr << "Error: bad date => " << date << std::endl;
+            continue;
+        }
+
+        char *endptr;
+        double value = std::strtod(value_str.c_str(), &endptr);
+        if (*endptr != '\0') {
+            std::cerr << "Error: not a valid number." << std::endl;
+            continue;
+        }
+        if (value <= 0) {
+            std::cerr << "Error: not a positive number." << std::endl;
+            continue;
+        }
+        if (value > 1000) {
+            std::cerr << "Error: too large a number" << std::endl;
+            continue;
+        }
+
+        double rate = getRate(date);
+        double result = value * rate;
+        std::cout << date << " => " << result  << std::endl;
+    }
+}
+
+
+/**
+    @brief opens data base and puts content in a map
+*/
+
+void BitcoinExchange::openDataBase(void)
+{
+    std::ifstream file("./data.csv");
+    std::string line;
+
+    openAndValidateFile(file);
+
+    while (std::getline(file, line))
+    {
+        if (line.empty())
+            continue;
+        std::string date = line.substr(0, line.find(','));
+        std::string value_str = line.substr(line.find(',') + 1);
+        /* convert the numeric portion to a double; atof is safe in C++98 */
+        double value = std::atof(value_str.c_str());
+        _database[date] = value;
+    }
+}
+
+// void BitcoinExchange::searchDate(std::string date)
+// {}
+
+/*********************** Private ***************************/
+void BitcoinExchange::openAndValidateFile(std::ifstream &file)
+{
+    if (!file.is_open())
+        throw std::runtime_error("Error opening file");
+    if (file.peek() == std::ifstream::traits_type::eof())
+        throw std::runtime_error("Empty file");
+}
+
+
 bool BitcoinExchange::validateDate(const std::string &date)
 {
     // format YYYY-MM-DD
-    if (date.length() != 10 || date[4] != '-' || date[7] != '-')
+    if (date.length() != 11 || date[4] != '-' || date[7] != '-' || date[10] != ' ')
         return false;
     for (int i = 0; i < 10; ++i) {
         if (i == 4 || i == 7) continue;
@@ -69,84 +155,7 @@ double BitcoinExchange::getRate(const std::string &date)
     return it->second;
 }
 
-void BitcoinExchange::searchDate(std::string date)
-{
-    (void)date;
-}
-void BitcoinExchange::openQueries(void)
-{
-    std::ifstream file(_fileName.c_str());
-    if (!file.is_open())
-        throw std::runtime_error("Error opening file");
-    if (file.peek() == std::ifstream::traits_type::eof())
-        throw std::runtime_error("Empty file");
-
-    std::string line;
-    while (std::getline(file, line)) {
-        if (line.empty())
-            continue;
-
-        size_t sep = line.find('|');
-        if (sep == std::string::npos) {
-            std::cerr << "Error: bad input => " << line << std::endl;
-            continue;
-        }
-
-        std::string date = line.substr(0, sep);
-        std::string value_str = line.substr(sep + 1);
-
-        if (!validateDate(date)) {
-            std::cerr << "Error: bad input => " << line << std::endl;
-            continue;
-        }
-
-        char *endptr;
-        double value = std::strtod(value_str.c_str(), &endptr);
-        if (*endptr != '\0') {
-            std::cerr << "Error: not a positive number." << std::endl;
-            continue;
-        }
-        if (value <= 0) {
-            std::cerr << "Error: not a positive number." << std::endl;
-            continue;
-        }
-        if (value > 1000) {
-            std::cerr << "Error: too large a number" << std::endl;
-            continue;
-        }
-
-        double rate = getRate(date);
-        double result = value * rate;
-        std::cout << date << " => " << value << " = " << result << std::endl;
-        _queries[date] = value;
-    }
-}
-
-
-
-void BitcoinExchange::openDataBase(void)
-{
-    std::ifstream file("./data.csv");
-    if (!file.is_open())
-        throw std::runtime_error("Error opening file");
-    if (file.peek() == std::ifstream::traits_type::eof())
-        throw std::runtime_error("Empty file");
-
-    std::string line;
-
-    while (std::getline(file, line))
-    {
-        if (line.empty())
-            continue;
-        std::string date = line.substr(0, line.find(','));
-        std::string value_str = line.substr(line.find(',') + 1);
-        /* convert the numeric portion to a double; atof is safe in C++98 */
-        double value = std::atof(value_str.c_str());
-        std::cout << "Date: " << date << std::endl;
-        std::cout << " Value: " << value << std::endl;
-        _database[date] = value;
-    }
-}
-
-void BitcoinExchange::searchDate(std::string date)
-{}
+// void BitcoinExchange::searchDate(std::string date)
+// {
+//     (void)date;
+// }

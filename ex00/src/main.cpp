@@ -6,7 +6,7 @@ int main(int ac, char **av)
     {
         BitcoinExchange convert(av[1]);
         convert.openDataBase();
-        convert.openQueries();
+        convert.repondQueries();
     }
     else 
         std::cout << "Error" << std::endl;
