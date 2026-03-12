@@ -101,8 +101,6 @@ void BitcoinExchange::openDataBase(void)
     }
 }
 
-// void BitcoinExchange::searchDate(std::string date)
-// {}
 
 /*********************** Private ***************************/
 void BitcoinExchange::openAndValidateFile(std::ifstream &file)
@@ -142,16 +140,21 @@ double BitcoinExchange::getRate(const std::string &date)
 {
     if (_database.empty())
         return 0.0;
-    std::map<std::string,double>::iterator it = _database.lower_bound(date);
+
+    std::map<std::string,double>::iterator it = _database.lower_bound(date); 
+    //lower bound returns greater or equal to the key vs. upper bound returns strictly greater than the key
+
     if (it == _database.end()) {
-        --it;
+        --it; // move to the last element
         return it->second;
     }
+
     if (it->first != date) {
         if (it == _database.begin())
             return it->second;
-        --it;
+        --it; 
     }
+
     return it->second;
 }
 
