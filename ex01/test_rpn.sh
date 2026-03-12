@@ -4,11 +4,22 @@
 
 BIN="./RPN"
 
+# colors
+BLUE="\033[1;34m"
+RESET="\033[0m"
+
 run() {
-    echo "\n$1"
+    printf "\n${BLUE}=== %s ===${RESET}\n" "$1"
     shift
     $BIN "$@"
 }
+
+
+# Subject tests cases
+run "Subject Case 1" "8 9 * 9 - 9 - 9 - 4 - 1 +"
+run "Subject Case 2" "7 7 * 7 -"
+run "Subject Case 3" "1 2 * 2 / 2 * 2 4 - +"
+run "Subject Case 4" "(1 + 1)"
 
 # Important edge cases
 run "Empty input" ""
@@ -18,8 +29,4 @@ run "Too many numbers" "1 2 3 +"
 run "Division by zero" "3 0 /"
 run "Multiple spaces" "2   3    +"
 run "Invalid character" "2 3 &"
-
-# Additional edge cases from exercise
 run "Edge Case - Invalid token" "2 a +"
-run "Edge Case - Parentheses" "(1 + 1)"
-run "Large chained operations" "8 9 * 9 - 9 - 9 - 4 - 1 +"
