@@ -10,6 +10,7 @@
 #include <sys/time.h>
 #include <cstdlib>
 #include <algorithm>
+#include <cmath>
 
 class PmergeMe {
 private:

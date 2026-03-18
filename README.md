@@ -26,26 +26,9 @@
         <stack>
 
     * ex02
+        * Resources: https://dev.to/emuminov/human-explanation-and-step-by-step-visualisation-of-the-ford-johnson-algorithm-5g91
         * merge insert algorithm: Ford-Johnson algorithm
         <vector >
         <deque>
 
-////
-Ongoing task: opening files
-next task: storing files in map
 
-
-/*
-//attributes
-set queries
-set database
-std::string fileName
-
-//methods
-
-void openQuery()
-void openDataBase()
-void searchDate()
-///////////***main** 
-displayConversion()
-*/
